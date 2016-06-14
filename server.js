@@ -25,10 +25,10 @@ var file = __dirname + '/public/tmp/data.json';
 jsonfile.spaces = 4;
 
 
-// ...
+// save file to data.json
 app.post('/add-contact', postCb);
 
-function postCb(req, res) {
+function postCb(req, res, next) {
     var data = req.body;
 
     jsonfile.readFile(file, readFileCb);
@@ -49,8 +49,7 @@ function postCb(req, res) {
         
         function writeFileCb(err) {
             if(err) {
-                log(err);
-                res.send('Write file error!');
+                next(err.message);
             } else {
                 res.send('Data saved.');
             }
@@ -58,7 +57,7 @@ function postCb(req, res) {
     }
 }
 
-
+// set contact list from data.json to front-end
 app.get('/contact-list', getCb);
 
 function getCb(req, res, next) {
@@ -66,15 +65,14 @@ function getCb(req, res, next) {
     
     function readFileCb(err, obj) {
         if (err) {
-//            res.send('getCb: error reading file');
-            log(err);
             next(err.messаge);
         } else {
             res.send(obj);
-            log(obj);
         }
     }
 }
+
+
 
 // start app
 app.listen(port, ipaddress, function () {

@@ -21,29 +21,12 @@ function documentReadyCb() {
     // send data to back end
     $('#submit-btn').click(submitBtnCb);
     
+    $( ".table" ).on( "click", '.btn-danger', function() {
+      console.log( $( this ).attr('id'));
+    });
+    
     refreshView();
     
-    function submitBtnCb(event) {
-        var newContact = {};
-        var ajaxObj = {};
-        
-        newContact = new Contact(
-            $('input#new-name').val(), 
-            $('input#new-email').val(), 
-            $('input#new-number').val()
-        );
-        
-        ajaxObj = {
-            type: 'POST',
-            data: JSON.stringify(newContact),
-            contentType: 'application/json',
-            url: 'http://localhost:3000/add-contact',
-            success: ajaxPostSuccessCb,
-            error: ajaxPostErrorCb
-        };
-        
-        $.ajax(ajaxObj);   
-    }
 }
 
 function refreshView() {
@@ -62,7 +45,6 @@ function refreshView() {
 
 // ajax callbacks
 function ajaxGetSuccessCb(data) {
-    log(data);
     showContactList(data);
 }
 
@@ -78,6 +60,29 @@ function ajaxPostErrorCb(err) {
     log(err);
 }
 
+// button callbacks
+function submitBtnCb(event) {
+    var newContact = {};
+    var ajaxObj = {};
+
+    newContact = new Contact(
+        $('input#new-name').val(), 
+        $('input#new-email').val(), 
+        $('input#new-number').val()
+    );
+
+    ajaxObj = {
+        type: 'POST',
+        data: JSON.stringify(newContact),
+        contentType: 'application/json',
+        url: 'http://localhost:3000/add-contact',
+        success: ajaxPostSuccessCb,
+        error: ajaxPostErrorCb
+    };
+
+    $.ajax(ajaxObj);   
+}
+
 // DOM manipulation
 function showContactList(contactList) {
     var contactListHtml = '';
@@ -85,17 +90,17 @@ function showContactList(contactList) {
     for (var i = 0; i < contactList.length; i++) {
         contactListHtml += 
             '\n' + 
-            '<tr class="contactList ' + contactList[i].id + '">' +
+            '<tr class="contact-list">' +
             '   <td>' + contactList[i].name + '</td>' +
             '   <td>' + contactList[i].email + '</td>' +
             '   <td>' + contactList[i].number + '</td>' +
             '   <td>' +
-            '       <button class="btn btn-danger">Remove</button>' +
+            '       <button type="submit" class="btn btn-danger" id="' + contactList[i].id + '">Delete</button>' +
             '   </td>' +
             '</tr>';
     }
     
-    $('.contactList').remove();
+    $('.contact-list').remove();
     $('tbody').append(contactListHtml);
 }
 
