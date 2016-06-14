@@ -1,10 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Contact List</title>
-        <script src="js/bundle.js"></script>
-    </head>
-    <body>
-        <div class="test">Hello World!</div>
-    </body>
+
+<head>
+    <title>Contact List</title>
+    <script src="js/bundle.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Contact List</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Number</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="text" class="form-control" id="new-name" value="Tyler Durden">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="new-email" value="td@paperstreet.com">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" id="new-number" value="555-0134">
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">Add Contact</button>
+                    </td>
+                </tr>
+                <tr class="contactList">
+                    <td>name</td>
+                    <td>email</td>
+                    <td>number</td>
+                    <td>
+                        <button class="btn btn-danger">Remove</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
 </html>
