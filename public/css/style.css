@@ -1,0 +1,7 @@
+@import url('node_modules/normalize.css/normalize.css');
+@import url('node_modules/bootstrap/dist/css/bootstrap.css');
+@import url('node_modules/bootstrap/dist/css/bootstrap-theme.css');
+
+.test {
+    border: 1px solid red;
+}
