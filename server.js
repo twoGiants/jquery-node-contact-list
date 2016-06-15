@@ -24,7 +24,6 @@ var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 var file = __dirname + '/public/tmp/data.json';
 jsonfile.spaces = 4;
 
-
 // save file to data.json
 app.post('/add-contact', postCb);
 
@@ -57,7 +56,7 @@ function postCb(req, res, next) {
     }
 }
 
-// set contact list from data.json to front-end
+// send contact list from data.json to front-end
 app.get('/contact-list', getCb);
 
 function getCb(req, res, next) {
@@ -72,6 +71,46 @@ function getCb(req, res, next) {
     }
 }
 
+// delete contact list entry
+app.delete('/delete/:id', deleteCb);
+
+function deleteCb(req, res, next) {
+    var elementId = parseInt(req.params.id);
+    
+    jsonfile.readFile(file, readFileCb);
+
+//    res.send('ok');
+    
+    function readFileCb(err, obj) {
+        var index = 0;
+        
+        if (err) {
+            console.log(err.message);
+            res.send('reading file failed');
+        }
+        
+        if (obj.length > 0) {
+            index = obj.map(mapFn).indexOf(elementId);
+
+            obj.splice(index, 1);
+            
+            jsonfile.writeFile(file, obj, writeFileCb);
+        }
+        
+        // functions & cbs
+        function writeFileCb(err) {
+            if (err) {
+                res.send('writing file after deleting user failed');
+            } else {
+                res.send('ok');
+            }
+        }
+        
+        function mapFn(x) {
+            return x.id;
+        }
+    }
+}
 
 
 // start app
