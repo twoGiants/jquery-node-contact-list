@@ -3,6 +3,8 @@
 // dependencies
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
+
+// css
 require('./../css/style.css');
 
 // Contact class
@@ -13,15 +15,24 @@ function Contact(name, email, number) {
     this.id = $.now();
 }
 
-// Main
+// main
 $(document).ready(documentReadyCb);
 
 function documentReadyCb() {
 
-    // send data to back end
-    $('#submit-btn').click(submitBtnCb);
+    // refresh page / show existing contacts
+    refreshContactsView();
 
-    function submitBtnCb() {
+    // add new contact
+    $('#add-contact-btn').click(addContactBtnCb);
+
+    // delete contact
+    $('.table').on('click', '.btn-danger', deleteBtnCb);
+
+    //////////////////
+    
+    // add contact button cb
+    function addContactBtnCb() {
         var newContact = {};
         var ajaxObj = {};
 
@@ -42,24 +53,21 @@ function documentReadyCb() {
 
         $.ajax(ajaxObj);
 
+        //////////////////
+        
         function ajaxPostSuccessCb(data) {
-            refreshView();
+            refreshContactsView();
         }
 
         function ajaxPostErrorCb(err) {
-            log(err);
+            console.log(err);
         }
     }
-
-    ///////////////
-
-    $('.table').on('click', '.btn-danger', deleteBtnCb);
-
+    
+    // delete contact button cb 
     function deleteBtnCb() {
         var id = $(this).attr('id');
         var ajaxObj = {};
-
-        console.log(id);
 
         ajaxObj = {
             type: 'DELETE',
@@ -69,22 +77,20 @@ function documentReadyCb() {
 
         $.ajax(ajaxObj);
 
+        //////////////////
+        
         function ajaxDeleteResponseCb(res) {
             if (res === 'ok') {
                 console.log('Deleting successfull.');
-                refreshView();
+                refreshContactsView();
             } else {
                 console.log('Deleting did not work: ' + res);
             }
         }
     }
-
-    ///////////////
-
-    refreshView();
 }
 
-function refreshView() {
+function refreshContactsView() {
     var ajaxObj = {};
 
     ajaxObj = {
@@ -97,12 +103,14 @@ function refreshView() {
 
     $.ajax(ajaxObj);
 
+    //////////////////
+    
     function ajaxGetSuccessCb(data) {
         showContactList(data);
     }
 
     function ajaxGetErrorCb(err) {
-        log(err);
+        console.log(err);
     }
 
     // DOM manipulation
@@ -125,10 +133,4 @@ function refreshView() {
         $('.contact-list').remove();
         $('tbody').append(contactListHtml);
     }
-}
-
-
-// helper
-function log(data) {
-    console.log(data);
 }
