@@ -8,37 +8,49 @@ var jsonfile = require('jsonfile');
 // server
 var app = express();
 
-// conf
-app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.json());
-app.use(function (err, req, res, next) {
-    console.error(err);
-    res.status(500).send(err);
-});
+// conf: local server
+var ipaddress = '127.0.0.1';
+var port = 3000;
 
-// openshift/local server conf
-var ipaddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
-var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
-
-// save file config
+// conf: save file
 var file = __dirname + '/public/tmp/data.json';
 jsonfile.spaces = 4;
 
-// save file to data.json
-app.post('/add-contact', postCb);
+// conf: app
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
+app.use(serverError);
 
-function postCb(req, res, next) {
+// ROUNTING
+
+// save contact to data.json
+app.put('/add-contact', putCb);
+
+// send contact list from data.json to front-end
+app.get('/contact-list', getCb);
+
+// delete contact list entry
+app.delete('/delete/:id', deleteCb);
+
+// start app
+app.listen(port, ipaddress, appListenCb);
+
+//////////////////
+
+function putCb(req, res, next) {
     var data = req.body;
 
     jsonfile.readFile(file, readFileCb);
 
+    //////////////////
+    
     function readFileCb(err, obj) {
         var dataArr = [];
         
         if (err) {
+            console.log('No data file found. Creating new data.json file in ' + file);
             dataArr.push(data);
             jsonfile.writeFile(file, dataArr, writeFileCb);
-            log('No data file found. Creating new data.json file in ' + file);
 
         } else {
             dataArr = obj;
@@ -46,21 +58,22 @@ function postCb(req, res, next) {
             jsonfile.writeFile(file, dataArr, writeFileCb);
         }
         
+        //////////////////
+        
         function writeFileCb(err) {
             if(err) {
                 next(err.message);
             } else {
-                res.send('Data saved.');
+                res.send('Contact saved.');
             }
         }
     }
 }
 
-// send contact list from data.json to front-end
-app.get('/contact-list', getCb);
-
 function getCb(req, res, next) {
     jsonfile.readFile(file, readFileCb);
+    
+    //////////////////
     
     function readFileCb(err, obj) {
         if (err) {
@@ -71,13 +84,12 @@ function getCb(req, res, next) {
     }
 }
 
-// delete contact list entry
-app.delete('/delete/:id', deleteCb);
-
 function deleteCb(req, res, next) {
     var elementId = parseInt(req.params.id);
     
     jsonfile.readFile(file, readFileCb);
+    
+    //////////////////
     
     function readFileCb(err, obj) {
         var index = 0;
@@ -87,6 +99,7 @@ function deleteCb(req, res, next) {
             next('reading file failed');
         }
         
+        // get index of element with id=elementId
         if (obj.length > 0) {
             index = obj.map(mapFn).indexOf(elementId);
 
@@ -95,7 +108,8 @@ function deleteCb(req, res, next) {
             jsonfile.writeFile(file, obj, writeFileCb);
         }
         
-        // functions & cbs
+        //////////////////
+        
         function writeFileCb(err) {
             if (err) {
                 next('writing file after deleting user failed');
@@ -110,13 +124,11 @@ function deleteCb(req, res, next) {
     }
 }
 
-
-// start app
-app.listen(port, ipaddress, function () {
+function appListenCb() {
     console.log('Server running on http://' + ipaddress + ':' + port);
-});
+}
 
-// helper
-function log(data) {
-    console.log(data);
+function serverError(err, req, res, next) {
+    console.error(err);
+    res.status(500).send(err);
 }

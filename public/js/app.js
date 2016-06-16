@@ -44,23 +44,24 @@ function main() {
         );
 
         ajaxSettings = {
-            type: 'POST',
+            type: 'PUT',
             data: JSON.stringify(newContact),
             contentType: 'application/json',
             url: 'http://localhost:3000/add-contact',
-            success: ajaxPostSuccessCb,
-            error: ajaxPostErrorCb
+            success: ajaxPutSuccessCb,
+            error: ajaxPutErrorCb
         };
 
         $.ajax(ajaxSettings);
 
         //////////////////
         
-        function ajaxPostSuccessCb(data) {
+        function ajaxPutSuccessCb(res) {
+            console.log(res);
             refreshContactsView();
         }
 
-        function ajaxPostErrorCb(err) {
+        function ajaxPutErrorCb(err) {
             console.error(err);
         }
     }
