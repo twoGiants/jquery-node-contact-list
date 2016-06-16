@@ -98,9 +98,9 @@ function deleteCb(req, res, next) {
         // functions & cbs
         function writeFileCb(err) {
             if (err) {
-                res.send('writing file after deleting user failed');
+                next('writing file after deleting user failed');
             } else {
-                res.send('ok');
+                res.send('Deleting successfull.');
             }
         }
         

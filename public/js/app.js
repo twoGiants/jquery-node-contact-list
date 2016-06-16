@@ -61,7 +61,7 @@ function main() {
         }
 
         function ajaxPostErrorCb(err) {
-            console.log(err);
+            console.error(err);
         }
     }
     
@@ -109,24 +109,24 @@ function refreshContactsView() {
     //////////////////
     
     function ajaxGetSuccessCb(data) {
-        showContactList(data);
+        createContactListAddToDom(data);
     }
 
     function ajaxGetErrorCb(err) {
-        console.log(err);
+        console.error(err);
     }
 
     // DOM manipulation
-    function showContactList(contactList) {
+    function createContactListAddToDom(contactList) {
         var contactListHtml = '';
 
         for (var i = 0; i < contactList.length; i++) {
             contactListHtml +=
                 '\n' +
                 '<tr class="contact-list">' +
-                '   <td>' + contactList[i].name + '</td>' +
-                '   <td>' + contactList[i].email + '</td>' +
-                '   <td>' + contactList[i].number + '</td>' +
+                '   <td class="contact-list-el">' + contactList[i].name + '</td>' +
+                '   <td class="contact-list-el">' + contactList[i].email + '</td>' +
+                '   <td class="contact-list-el">' + contactList[i].number + '</td>' +
                 '   <td>' +
                 '       <button type="submit" class="btn btn-danger delete-contact-btn" id="' + contactList[i].id + '">Delete</button>' +
                 '   </td>' +
