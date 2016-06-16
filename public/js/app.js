@@ -18,6 +18,8 @@ function Contact(name, email, number) {
 // main
 $(document).ready(main);
 
+//////////////////
+
 function main() {
     // refresh contact list
     refreshContactsView();
@@ -27,7 +29,6 @@ function main() {
 
     // delete contact
     $('.table').on('click', '.delete-contact-btn', deleteBtnCb);
-
 
     //////////////////
 
