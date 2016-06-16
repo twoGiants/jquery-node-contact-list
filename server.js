@@ -78,15 +78,13 @@ function deleteCb(req, res, next) {
     var elementId = parseInt(req.params.id);
     
     jsonfile.readFile(file, readFileCb);
-
-//    res.send('ok');
     
     function readFileCb(err, obj) {
         var index = 0;
         
         if (err) {
             console.log(err.message);
-            res.send('reading file failed');
+            next('reading file failed');
         }
         
         if (obj.length > 0) {

@@ -16,25 +16,26 @@ function Contact(name, email, number) {
 }
 
 // main
-$(document).ready(documentReadyCb);
+$(document).ready(main);
 
-function documentReadyCb() {
+function main() {
 
-    // refresh page / show existing contacts
+    // refresh contact list
     refreshContactsView();
 
     // add new contact
-    $('#add-contact-btn').click(addContactBtnCb);
+    $('.table').on('click', '#add-contact-btn', addContactBtnCb);
 
     // delete contact
-    $('.table').on('click', '.btn-danger', deleteBtnCb);
+    $('.table').on('click', '.delete-contact-btn', deleteBtnCb);
 
+    
     //////////////////
     
     // add contact button cb
     function addContactBtnCb() {
         var newContact = {};
-        var ajaxObj = {};
+        var ajaxSettings = {};
 
         newContact = new Contact(
             $('input#new-name').val(),
@@ -42,7 +43,7 @@ function documentReadyCb() {
             $('input#new-number').val()
         );
 
-        ajaxObj = {
+        ajaxSettings = {
             type: 'POST',
             data: JSON.stringify(newContact),
             contentType: 'application/json',
@@ -51,7 +52,7 @@ function documentReadyCb() {
             error: ajaxPostErrorCb
         };
 
-        $.ajax(ajaxObj);
+        $.ajax(ajaxSettings);
 
         //////////////////
         
@@ -67,33 +68,35 @@ function documentReadyCb() {
     // delete contact button cb 
     function deleteBtnCb() {
         var id = $(this).attr('id');
-        var ajaxObj = {};
+        var ajaxSettings = {};
 
-        ajaxObj = {
+        ajaxSettings = {
             type: 'DELETE',
             url: '/delete/' + id,
-            success: ajaxDeleteResponseCb
+            success: ajaxDeleteSuccessCb,
+            error: ajaxDeleteErrorCb
         };
 
-        $.ajax(ajaxObj);
+        $.ajax(ajaxSettings);
 
         //////////////////
         
-        function ajaxDeleteResponseCb(res) {
-            if (res === 'ok') {
-                console.log('Deleting successfull.');
-                refreshContactsView();
-            } else {
-                console.log('Deleting did not work: ' + res);
-            }
+        function ajaxDeleteSuccessCb(res) {
+            console.log('Deleting successfull.');
+            refreshContactsView();
+            
+        }
+        
+        function ajaxDeleteErrorCb(err) {
+            console.error(err.responseText);
         }
     }
 }
 
 function refreshContactsView() {
-    var ajaxObj = {};
+    var ajaxSettings = {};
 
-    ajaxObj = {
+    ajaxSettings = {
         type: 'GET',
         contentType: 'application/json',
         url: 'http://localhost:3000/contact-list',
@@ -101,7 +104,7 @@ function refreshContactsView() {
         error: ajaxGetErrorCb
     };
 
-    $.ajax(ajaxObj);
+    $.ajax(ajaxSettings);
 
     //////////////////
     
@@ -125,7 +128,7 @@ function refreshContactsView() {
                 '   <td>' + contactList[i].email + '</td>' +
                 '   <td>' + contactList[i].number + '</td>' +
                 '   <td>' +
-                '       <button type="submit" class="btn btn-danger" id="' + contactList[i].id + '">Delete</button>' +
+                '       <button type="submit" class="btn btn-danger delete-contact-btn" id="' + contactList[i].id + '">Delete</button>' +
                 '   </td>' +
                 '</tr>';
         }
