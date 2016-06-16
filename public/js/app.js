@@ -19,7 +19,6 @@ function Contact(name, email, number) {
 $(document).ready(main);
 
 function main() {
-
     // refresh contact list
     refreshContactsView();
 
@@ -29,14 +28,31 @@ function main() {
     // delete contact
     $('.table').on('click', '.delete-contact-btn', deleteBtnCb);
 
-    
+
     //////////////////
-    
+
     // add contact button cb
     function addContactBtnCb() {
         var newContact = {};
         var ajaxSettings = {};
 
+        // input fields empty?
+        if ($.trim($('#new-name').val()) === '' ||
+            $.trim($('#new-email').val()) === '' ||
+            $.trim($('#new-number').val()) === '') {
+            
+            $(this)
+                .popover({
+                    content: 'Fields can not be empty.',
+                    placement: 'top'
+                })
+                .popover('show');
+            
+            return false;
+        } else {
+            $(this).popover('destroy');
+        }
+        
         newContact = new Contact(
             $('input#new-name').val(),
             $('input#new-email').val(),
@@ -55,7 +71,7 @@ function main() {
         $.ajax(ajaxSettings);
 
         //////////////////
-        
+
         function ajaxPutSuccessCb(res) {
             console.log(res);
             refreshContactsView();
@@ -65,7 +81,7 @@ function main() {
             console.error(err);
         }
     }
-    
+
     // delete contact button cb 
     function deleteBtnCb() {
         var id = $(this).attr('id');
@@ -81,13 +97,13 @@ function main() {
         $.ajax(ajaxSettings);
 
         //////////////////
-        
+
         function ajaxDeleteSuccessCb(res) {
             console.log('Deleting successfull.');
             refreshContactsView();
-            
+
         }
-        
+
         function ajaxDeleteErrorCb(err) {
             console.error(err.responseText);
         }
@@ -108,7 +124,7 @@ function refreshContactsView() {
     $.ajax(ajaxSettings);
 
     //////////////////
-    
+
     function ajaxGetSuccessCb(data) {
         createContactListAddToDom(data);
     }
